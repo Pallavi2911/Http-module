@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { Post } from './post.module';
 
 @Component({
   selector: 'app-root',
@@ -16,14 +17,14 @@ export class AppComponent implements OnInit {
     this.fetchPosts();
   }
 
-  onCreatePost(postData: { title: string; content: string }) {
+  onCreatePost(postData: Post) {
     // Send Http request
     console.log(postData);
     //posts.json added at the end of firebase url is just firebase requirement
     //Angular HTTP client will take our JavaScript object postData here and automatically convert it to JSON data for us.
     //that requests are only sent when you subscribe.
     this.http
-      .post(
+      .post<{ name: string }>(
         'https://ng-complete-guide-5f4b0-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json',
         postData
       )
@@ -38,13 +39,13 @@ export class AppComponent implements OnInit {
   }
   private fetchPosts() {
     this.http
-      .get(
+      .get<{ [key: string]: Post }>(
         'https://ng-complete-guide-5f4b0-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json'
       )
       .pipe(
         //use of map operator to transform response data
         map((responseData) => {
-          const postsArray = [];
+          const postsArray: Post[] = [];
           for (const key in responseData) {
             if (responseData.hasOwnProperty(key)) {
               postsArray.push({ ...responseData[key], id: key });
