@@ -10,6 +10,7 @@ import { Post } from './post.module';
 })
 export class AppComponent implements OnInit {
   loadedPosts = [];
+  isFetching = false;
 
   constructor(private http: HttpClient) {}
 
@@ -34,6 +35,7 @@ export class AppComponent implements OnInit {
   }
 
   onFetchPosts() {
+    this.isFetching = true;
     // Send Http request
     this.fetchPosts();
   }
@@ -55,7 +57,7 @@ export class AppComponent implements OnInit {
         })
       )
       .subscribe((posts) => {
-        console.log(posts);
+        this.isFetching = false;
         this.loadedPosts = posts;
       });
   }
