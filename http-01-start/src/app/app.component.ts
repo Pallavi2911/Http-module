@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { Post } from './post.module';
 import { PostsService } from './posts.service';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -38,5 +39,8 @@ export class AppComponent implements OnInit {
 
   onClearPosts() {
     // Send Http request
+    this.postsService.deletePosts().subscribe(() => {
+      this.loadedPosts = [];
+    });
   }
 }
