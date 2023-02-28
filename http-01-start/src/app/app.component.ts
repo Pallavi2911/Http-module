@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+
 import { Post } from './post.module';
+import { PostsService } from './posts.service';
 
 @Component({
   selector: 'app-root',
@@ -12,55 +13,22 @@ export class AppComponent implements OnInit {
   loadedPosts = [];
   isFetching = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private postsService: PostsService) {}
 
   ngOnInit() {
-    this.fetchPosts();
+    this.postsService.fetchPosts();
   }
 
   onCreatePost(postData: Post) {
-    // Send Http request
-    console.log(postData);
-    //posts.json added at the end of firebase url is just firebase requirement
-    //Angular HTTP client will take our JavaScript object postData here and automatically convert it to JSON data for us.
-    //that requests are only sent when you subscribe.
-    this.http
-      .post<{ name: string }>(
-        'https://ng-complete-guide-5f4b0-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json',
-        postData
-      )
-      .subscribe((responseData) => {
-        console.log(responseData);
-      });
+    this.postsService.onCreateAndSharePost(postData);
   }
 
   onFetchPosts() {
     this.isFetching = true;
     // Send Http request
-    this.fetchPosts();
+    this.postsService.fetchPosts();
   }
-  private fetchPosts() {
-    this.http
-      .get<{ [key: string]: Post }>(
-        'https://ng-complete-guide-5f4b0-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json'
-      )
-      .pipe(
-        //use of map operator to transform response data
-        map((responseData) => {
-          const postsArray: Post[] = [];
-          for (const key in responseData) {
-            if (responseData.hasOwnProperty(key)) {
-              postsArray.push({ ...responseData[key], id: key });
-            }
-          }
-          return postsArray;
-        })
-      )
-      .subscribe((posts) => {
-        this.isFetching = false;
-        this.loadedPosts = posts;
-      });
-  }
+
   onClearPosts() {
     // Send Http request
   }
