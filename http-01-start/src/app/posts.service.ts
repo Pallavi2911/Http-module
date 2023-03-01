@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Subject, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { Post } from './post.module';
 
 @Injectable({ providedIn: 'root' })
@@ -48,6 +48,11 @@ export class PostsService {
             }
           }
           return postsArray;
+        }),
+        catchError((errorRes) => {
+          //you could consider using catchError if you have some generic
+          //error handling task you wanna execute.
+          return throwError(errorRes);
         })
       );
   }
