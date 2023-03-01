@@ -1,10 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Post } from './post.module';
 
 @Injectable({ providedIn: 'root' })
 export class PostsService {
+  error = new Subject<string>();
+
   constructor(private http: HttpClient) {}
 
   onCreateAndSharePost(postData: Post) {
@@ -19,10 +22,15 @@ export class PostsService {
         'https://ng-complete-guide-5f4b0-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json',
         postData
       )
-      .subscribe((responseData) => {
-        console.log('response: ');
-        console.log(responseData);
-      });
+      .subscribe(
+        (responseData) => {
+          console.log('response: ');
+          console.log(responseData);
+        },
+        (error) => {
+          this.error.next(error.message);
+        }
+      );
   }
 
   fetchPosts() {
