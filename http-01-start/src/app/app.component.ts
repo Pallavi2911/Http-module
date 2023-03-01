@@ -27,6 +27,10 @@ export class AppComponent implements OnInit, OnDestroy {
       this.error = errorMessage;
     });
 
+    this.fetchPosts();
+  }
+
+  private fetchPosts() {
     this.isFetching = true;
     this.postsService.fetchPosts().subscribe(
       (posts) => {
@@ -45,20 +49,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   onFetchPosts() {
-    this.isFetching = true;
     // Send Http request
-    this.postsService.fetchPosts().subscribe(
-      (posts) => {
-        this.isFetching = false;
-        this.loadedPosts = posts;
-      },
-      (error) => {
-        this.isFetching = false;
-        console.log('this.loadedPosts');
-        console.log(this.loadedPosts);
-        this.error = error.message;
-      }
-    );
+    this.fetchPosts();
   }
 
   onClearPosts() {
