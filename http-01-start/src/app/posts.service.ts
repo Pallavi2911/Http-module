@@ -1,7 +1,12 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpEventType,
+  HttpHeaders,
+  HttpParams,
+} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Subject, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { Post } from './post.module';
 
 @Injectable({ providedIn: 'root' })
@@ -20,12 +25,15 @@ export class PostsService {
     this.http
       .post<{ name: string }>(
         'https://ng-complete-guide-5f4b0-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json',
-        postData
+        postData,
+        {
+          observe: 'response',
+        }
       )
       .subscribe(
         (responseData) => {
           console.log('response: ');
-          console.log(responseData);
+          console.log(responseData.body);
         },
         (error) => {
           this.error.next(error.message);
@@ -67,8 +75,24 @@ export class PostsService {
   }
 
   deletePosts() {
-    return this.http.delete(
-      'https://ng-complete-guide-5f4b0-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json'
-    );
+    return this.http
+      .delete(
+        'https://ng-complete-guide-5f4b0-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json',
+        {
+          observe: 'events',
+        }
+      )
+      .pipe(
+        tap((event) => {
+          console.log('delete : ');
+          console.log(event);
+          if (event.type === HttpEventType.Sent) {
+            //console.log(event.body);
+          }
+          if (event.type === HttpEventType.Response) {
+            console.log(event.body);
+          }
+        })
+      );
   }
 }
