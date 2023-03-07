@@ -42,7 +42,10 @@ export class PostsService {
   }
 
   fetchPosts() {
+    //search params, this object is immutable.
     let searchParams = new HttpParams();
+    //So you actually need to override this and therefore this needs to be a variable with a new,
+    //the result of append.
     searchParams = searchParams.append('print', 'pretty');
     searchParams = searchParams.append('custom', 'key');
 
